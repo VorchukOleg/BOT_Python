@@ -22,12 +22,7 @@ async def rand(ctx, *arg):
     await ctx.reply(random.randint(0, 100))
 
 
-@bot.command()
-async def Hi(ctx):
-    await ctx.send('Hi')
-
-
-commands = ['привет, бот!', 'привет', 'бот', 'hi', 'hello']
+commands = ['привет, бот!', 'привет', 'hi', 'hello']
 
 
 @bot.event
@@ -36,8 +31,12 @@ async def on_message(message):
     if command in commands:
         if message.author != bot.user:
             await message.channel.send(f'Привет, {message.author.mention}!')
-            await message.channel.send(f'Выбери:')
-    if command == '!menu':
+            await message.channel.send(f'Попробуй написать !find  и найди правильную кнопку для продолжения')
+    if command == '!wordgame':
+        view = Wordgame()
+        await message.channel.send(view=view)
+
+    if command == '!find':
         view = Menu()
         await message.channel.send(view=view)
 
@@ -45,10 +44,10 @@ async def on_message(message):
         print(FLAG['word'], command)
         if FLAG['word'][-1].lower() == command[0].lower():
             FLAG['history'].append(command.lower())
-            await message.channel.send(view=Menu())
+            await message.channel.send(view=Wordgame())
 
 
-class Menu(discord.ui.View):
+class Wordgame(discord.ui.View):
     def __init__(self):
         super().__init__()
         self.value = None
@@ -66,18 +65,49 @@ class Menu(discord.ui.View):
         while FLAG['word'][0] != FLAG['history'][-1][-1]:
             FLAG['word'] = random.choice(words)
 
-
         else:
             await interaction.followup.send(FLAG['word'])
             FLAG['history'].append(FLAG['word'].replace('ь', '').replace('ы', ''))
-            print(FLAG['history'])
+            if len(FLAG['word']) > 1:
+                await interaction.followup.send(random.choice(['Не надоело?', 'Я могу долго так играть', 'Может сдашься?']))
+
+    @discord.ui.button(label='Сдаться', style=discord.ButtonStyle.red)
+    async def button5(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Поздравляю! Вы проиграли бездушной машине")
+
+class Menu(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.value = None
+
+    @discord.ui.button(label='Серая кнопка', style=discord.ButtonStyle.grey)
+    async def button1(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Мимо!")
+
+    @discord.ui.button(label='Зеленая кнопка', style=discord.ButtonStyle.green)
+    async def button2(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Мимо!")
+
+    @discord.ui.button(label='Красная кнопка', style=discord.ButtonStyle.red)
+    async def button3(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Попал! Теперь пиши !wordgame")
+
+    @discord.ui.button(label='Красная кнопка', style=discord.ButtonStyle.primary)
+    async def button4(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_message("Мимо!")
 
 
 @bot.command()
-async def menu(ctx):
+async def wordgame(ctx):
+    view = Wordgame()
+    await ctx.reply(view=view)
+
+
+@bot.command()
+async def buttons(ctx):
     view = Menu()
     await ctx.reply(view=view)
 
 
-TOKEN = 'MTEwMDgyNzQ2MjQ2NTc2MTM1Mg.GYJPAZ.ugxqvVXZH49BurHXxDA3wK_KSpJKNNS0nkyyAU'
+TOKEN = 'MTEwMDgyNzQ2MjQ2NTc2MTM1Mg.Gamih-.W8B7CtBR3Jn2CvjcjaN0lHIyhuuuuN6RotKHuc'
 bot.run(TOKEN)
