@@ -109,5 +109,5 @@ async def buttons(ctx):
     await ctx.reply(view=view)
 
 
-TOKEN = 'MTEwMDgyNzQ2MjQ2NTc2MTM1Mg.Gamih-.W8B7CtBR3Jn2CvjcjaN0lHIyhuuuuN6RotKHuc'
+TOKEN = ''
 bot.run(TOKEN)
