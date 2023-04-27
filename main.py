@@ -31,7 +31,7 @@ async def on_message(message):
     if command in commands:
         if message.author != bot.user:
             await message.channel.send(f'Привет, {message.author.mention}!')
-            await message.channel.send(f'Попробуй написать !find  и найди правильную кнопку для продолжения')
+            await message.channel.send(f'Попробуй написать !find и найди правильную кнопку для продолжения')
     if command == '!wordgame':
         view = Wordgame()
         await message.channel.send(view=view)
